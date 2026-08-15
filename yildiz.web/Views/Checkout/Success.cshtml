@@ -1,0 +1,129 @@
+﻿@model yildiz.entities.Concrete.Order
+
+@{
+    ViewData["Title"] = "Sipariş Başarılı";
+}
+
+<style>
+    .success-page {
+        min-height: 70vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 20px;
+    }
+
+    .success-card {
+        width: 100%;
+        max-width: 650px;
+        background: white;
+        border-radius: 20px;
+        padding: 45px;
+        text-align: center;
+        box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+    }
+
+    .success-icon {
+        font-size: 70px;
+        margin-bottom: 20px;
+    }
+
+    .success-card h1 {
+        color: #111827;
+        font-size: 40px;
+        margin: 0 0 15px;
+    }
+
+    .success-card p {
+        color: #64748b;
+        font-size: 18px;
+        margin-bottom: 30px;
+    }
+
+    .success-info {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+
+        .success-info div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            color: #475569;
+        }
+
+            .success-info div:last-child {
+                margin-bottom: 0;
+            }
+
+        .success-info strong {
+            color: #111827;
+        }
+
+    .success-button {
+        display: inline-block;
+        background: #fbbf24;
+        color: #111827;
+        padding: 14px 25px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 800;
+    }
+
+        .success-button:hover {
+            background: #f59e0b;
+        }
+</style>
+
+<div class="success-page">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h1>Sipariş Başarılı</h1>
+
+        <p>
+            Siparişin başarıyla oluşturuldu.
+        </p>
+
+        <div class="success-info">
+
+            <div>
+                <span>Sipariş No</span>
+                <strong>#@Model.OrderId</strong>
+            </div>
+
+            <div>
+                <span>Ad Soyad</span>
+                <strong>@Model.CustomerName</strong>
+            </div>
+
+            <div>
+                <span>E-posta</span>
+                <strong>@Model.CustomerEmail</strong>
+            </div>
+
+            <div>
+                <span>Toplam</span>
+                <strong>@Model.TotalPrice.ToString("N2") ₺</strong>
+            </div>
+
+        </div>
+
+        <a asp-controller="Product"
+           asp-action="Index"
+           class="success-button">
+
+            Alışverişe Devam Et
+
+        </a>
+
+    </div>
+
+</div>

@@ -1,0 +1,62 @@
+﻿@model yildiz.entities.Concrete.Product
+
+<h2>Ürün Güncelle</h2>
+
+<form asp-action="Update" method="post">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <input type="hidden" asp-for="ProductId" />
+
+    <div class="mb-3">
+        <label>Ürün Adı</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Açıklama</label>
+        <input asp-for="Description" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Fiyat</label>
+        <input asp-for="Price" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Stok</label>
+        <input asp-for="Stock" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Resim URL</label>
+        <input asp-for="ImageUrl" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Kategori</label>
+
+        <select asp-for="CategoryId" class="form-control">
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category.CategoryId">
+                    @category.CategoryName
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Aktif</label>
+        <input asp-for="IsActive" type="checkbox" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Güncelle
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Vazgeç
+    </a>
+
+</form>

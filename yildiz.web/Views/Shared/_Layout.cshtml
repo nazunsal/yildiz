@@ -1,0 +1,261 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Yıldız</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+
+        <div class="container">
+
+            <!-- LOGO -->
+
+            <a class="navbar-brand fw-bold"
+               asp-controller="Home"
+               asp-action="Index">
+
+                ⭐ YILDIZ
+
+            </a>
+
+
+            <!-- MOBİL MENÜ -->
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Menüyü aç">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+
+            <div class="collapse navbar-collapse"
+                 id="mainNavbar">
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+
+                    <!-- ANA SAYFA -->
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Home"
+                           asp-action="Index">
+
+                            Ana Sayfa
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- ÜRÜNLER -->
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Product"
+                           asp-action="Index">
+
+                            Ürünler
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- KATEGORİLER -->
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Category"
+                           asp-action="Index">
+
+                            Kategoriler
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- SEPET -->
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Cart"
+                           asp-action="Index">
+
+                            🛒 Sepetim
+
+                        </a>
+
+                    </li>
+
+
+                    <!-- YÖNETİM -->
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Admin"
+                           asp-action="Login">
+
+                            ⚙️ Yönetim
+
+                        </a>
+
+                    </li>
+
+
+                    @if (Context.Session.GetString("IsAdmin") == "true")
+                    {
+                        <!-- ADMİN GİRİŞ YAPMIŞ -->
+
+                        <li class="nav-item">
+
+                            <span class="nav-link">
+
+                                ⚙️ @Context.Session.GetString("AdminUsername")
+
+                            </span>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Admin"
+                               asp-action="Logout">
+
+                                🚪 Çıkış
+
+                            </a>
+
+                        </li>
+                    }
+                    else if (Context.Session.GetString("IsLoggedIn") == "true")
+                    {
+                        <!-- MÜŞTERİ GİRİŞ YAPMIŞ -->
+
+                        <li class="nav-item">
+
+                            <span class="nav-link">
+
+                                👤 @Context.Session.GetString("Username")
+
+                            </span>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Account"
+                               asp-action="Logout">
+
+                                🚪 Çıkış
+
+                            </a>
+
+                        </li>
+                    }
+                    else
+                    {
+                        <!-- HİÇBİR GİRİŞ YOK -->
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-controller="Account"
+                               asp-action="Login">
+
+                                🔐 Giriş Yap
+
+                            </a>
+
+                        </li>
+                    }
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- SAYFA İÇERİĞİ -->
+
+    <main class="container py-4">
+
+        @RenderBody()
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="border-top py-4 mt-5">
+
+        <div class="container text-center">
+
+            <div class="fw-bold mb-2">
+
+                ⭐ YILDIZ
+
+            </div>
+
+            <div class="text-muted">
+
+                © 2026 Yıldız. Tüm hakları saklıdır.
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false
+    )
+
+</body>
+
+</html>

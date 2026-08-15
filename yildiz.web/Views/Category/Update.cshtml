@@ -1,0 +1,22 @@
+﻿@model yildiz.entities.Concrete.Category
+
+<h2>Kategori Güncelle</h2>
+
+<form asp-action="Update" method="post">
+
+    <input type="hidden" asp-for="CategoryId" />
+
+    <div class="mb-3">
+        <label>Kategori Adı</label>
+        <input asp-for="CategoryName" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Güncelle
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Vazgeç
+    </a>
+
+</form>

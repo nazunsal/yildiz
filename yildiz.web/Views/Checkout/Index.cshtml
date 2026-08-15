@@ -1,0 +1,417 @@
+﻿@model IEnumerable<yildiz.web.Models.CartProduct>
+
+@{
+    ViewData["Title"] = "Ödeme";
+    var total = Model.Sum(x => x.Product.Price * x.Quantity);
+}
+
+<style>
+    .checkout-page {
+        padding: 50px 0 100px;
+        min-height: 70vh;
+    }
+
+    .checkout-header {
+        margin-bottom: 35px;
+    }
+
+        .checkout-header span {
+            color: #f59e0b;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .checkout-header h1 {
+            color: #111827;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 8px 0;
+        }
+
+        .checkout-header p {
+            color: #6b7280;
+            font-size: 18px;
+        }
+
+    .checkout-content {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 30px;
+        align-items: start;
+    }
+
+    .checkout-card {
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    }
+
+    .checkout-section {
+        margin-bottom: 30px;
+    }
+
+    .checkout-section-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 18px;
+    }
+
+    .checkout-field {
+        margin-bottom: 18px;
+    }
+
+        .checkout-field label {
+            display: block;
+            color: #111827;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .checkout-field input,
+        .checkout-field textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .checkout-field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+            .checkout-field input:focus,
+            .checkout-field textarea:focus {
+                outline: none;
+                border-color: #fbbf24;
+            }
+
+    .checkout-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .checkout-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 13px 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .test-payment-info {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .order-summary {
+        background: #111827;
+        color: white;
+        border-radius: 18px;
+        padding: 30px;
+        position: sticky;
+        top: 30px;
+    }
+
+        .order-summary h2 {
+            color: white;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+    .summary-product {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 15px;
+        color: #d1d5db;
+    }
+
+    .summary-product-name {
+        flex: 1;
+    }
+
+        .summary-product-name small {
+            color: #9ca3af;
+        }
+
+    .summary-product-price {
+        font-weight: 700;
+        color: white;
+    }
+
+    .summary-total {
+        border-top: 1px solid #374151;
+        margin-top: 20px;
+        padding-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+    .payment-button {
+        width: 100%;
+        border: none;
+        background: #fbbf24;
+        color: #111827;
+        padding: 16px;
+        border-radius: 11px;
+        font-size: 18px;
+        font-weight: 800;
+        cursor: pointer;
+        margin-top: 25px;
+    }
+
+        .payment-button:hover {
+            background: #f59e0b;
+        }
+
+    .back-cart {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        color: #6b7280;
+        text-decoration: none;
+    }
+
+        .back-cart:hover {
+            color: #f59e0b;
+        }
+
+    @@media (max-width: 900px) {
+        .checkout-content {
+            grid-template-columns: 1fr;
+        }
+
+        .order-summary {
+            position: static;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .checkout-header h1 {
+            font-size: 38px;
+        }
+
+        .checkout-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="checkout-page">
+
+    <div class="container">
+
+        <div class="checkout-header">
+            <span>YILDIZ MAĞAZA</span>
+
+            <h1>Ödeme</h1>
+
+            <p>
+                Teslimat ve ödeme bilgilerini girerek siparişini tamamla.
+            </p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="checkout-error">
+                @ViewBag.Error
+            </div>
+        }
+
+        <div class="checkout-content">
+
+            <div class="checkout-card">
+
+                <form asp-controller="Checkout"
+                      asp-action="Complete"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="checkout-section">
+
+                        <div class="checkout-section-title">
+                            Teslimat Bilgileri
+                        </div>
+
+                        <div class="checkout-field">
+
+                            <label>Ad Soyad</label>
+
+                            <input type="text"
+                                   name="customerName"
+                                   placeholder="Ad Soyad"
+                                   required />
+
+                        </div>
+
+                        <div class="checkout-field">
+
+                            <label>E-posta</label>
+
+                            <input type="email"
+                                   name="customerEmail"
+                                   placeholder="ornek@mail.com"
+                                   required />
+
+                        </div>
+
+                        <div class="checkout-field">
+
+                            <label>Adres</label>
+
+                            <textarea name="address"
+                                      placeholder="Teslimat adresinizi girin"
+                                      required></textarea>
+
+                        </div>
+
+                    </div>
+
+                    <div class="checkout-section">
+
+                        <div class="checkout-section-title">
+                            Kart Bilgileri
+                        </div>
+
+                        <div class="test-payment-info">
+                            Test ödeme sistemi
+                        </div>
+
+                        <div class="checkout-field">
+
+                            <label>Kart Üzerindeki Ad</label>
+
+                            <input type="text"
+                                   name="cardName"
+                                   placeholder="AD SOYAD"
+                                   required />
+
+                        </div>
+
+                        <div class="checkout-field">
+
+                            <label>Kart Numarası</label>
+
+                            <input type="text"
+                                   name="cardNumber"
+                                   placeholder="1234 5678 9012 3456"
+                                   maxlength="19"
+                                   required />
+
+                        </div>
+
+                        <div class="checkout-row">
+
+                            <div class="checkout-field">
+
+                                <label>Son Kullanma Tarihi</label>
+
+                                <input type="text"
+                                       name="expiryDate"
+                                       placeholder="AA/YY"
+                                       maxlength="5"
+                                       required />
+
+                            </div>
+
+                            <div class="checkout-field">
+
+                                <label>CVV</label>
+
+                                <input type="password"
+                                       name="cvv"
+                                       placeholder="123"
+                                       maxlength="3"
+                                       required />
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit"
+                            class="payment-button">
+
+                        Ödemeyi Tamamla
+
+                    </button>
+
+                </form>
+
+                <a asp-controller="Cart"
+                   asp-action="Index"
+                   class="back-cart">
+
+                    Sepete Geri Dön
+
+                </a>
+
+            </div>
+
+            <div class="order-summary">
+
+                <h2>Sipariş Özeti</h2>
+
+                @foreach (var item in Model)
+                {
+                    var itemTotal =
+                        item.Product.Price * item.Quantity;
+
+                    <div class="summary-product">
+
+                        <div class="summary-product-name">
+
+                            @item.Product.Name
+
+                            <br />
+
+                            <small>
+                                @item.Quantity adet
+                            </small>
+
+                        </div>
+
+                        <div class="summary-product-price">
+
+                            @itemTotal.ToString("N2") ₺
+
+                        </div>
+
+                    </div>
+                }
+
+                <div class="summary-total">
+
+                    <span>Toplam</span>
+
+                    <span>
+                        @total.ToString("N2") ₺
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

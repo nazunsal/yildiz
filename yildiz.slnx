@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="yildiz.business/yildiz.business.csproj" />
+  <Project Path="yildiz.DataAccess/yildiz.DataAccess.csproj" />
+  <Project Path="yildiz.DTO/yildiz.DTO.csproj" />
+  <Project Path="yildiz.entities/yildiz.entities.csproj" />
+  <Project Path="yildiz.web/yildiz.web.csproj" />
+</Solution>

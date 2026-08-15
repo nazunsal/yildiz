@@ -1,0 +1,397 @@
+﻿@model IEnumerable<yildiz.entities.Concrete.Order>
+
+@{
+    ViewData["Title"] = "Siparişler";
+}
+
+<style>
+    .orders-page {
+        padding: 30px 0 60px;
+    }
+
+    .orders-header {
+        margin-bottom: 35px;
+    }
+
+        .orders-header span {
+            display: block;
+            color: #f5a800;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .orders-header h1 {
+            font-size: 48px;
+            margin: 0 0 10px;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .orders-header p {
+            color: #64748b;
+            font-size: 18px;
+            margin: 0;
+        }
+
+    .back-admin {
+        display: inline-block;
+        margin-bottom: 25px;
+        color: #111827;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .back-admin:hover {
+            color: #f59e0b;
+        }
+
+    .order-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .order-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .order-number {
+        font-size: 22px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .order-date {
+        color: #64748b;
+    }
+
+    .order-info {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .info-box {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+        .info-box span {
+            display: block;
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .info-box strong {
+            color: #111827;
+            font-size: 16px;
+        }
+
+    .status-box {
+        margin-top: 20px;
+        padding: 18px;
+        background: #f8fafc;
+        border-radius: 12px;
+    }
+
+        .status-box label {
+            display: block;
+            color: #111827;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+    .status-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .status-select {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        background: white;
+        font-size: 15px;
+    }
+
+    .status-button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 9px;
+        background: #111827;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .status-button:hover {
+            background: #f59e0b;
+            color: #111827;
+        }
+
+    .order-products {
+        margin-top: 20px;
+    }
+
+        .order-products h3 {
+            color: #111827;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+    .product-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .product-name {
+        color: #111827;
+        font-weight: 600;
+    }
+
+    .product-details {
+        color: #64748b;
+    }
+
+    .order-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #e5e7eb;
+        font-size: 22px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .empty-orders {
+        background: white;
+        border-radius: 18px;
+        padding: 60px 30px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .empty-orders-icon {
+        font-size: 55px;
+        margin-bottom: 15px;
+    }
+
+    .empty-orders h2 {
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .empty-orders p {
+        color: #64748b;
+    }
+
+    @@media (max-width: 800px) {
+        .order-info {
+            grid-template-columns: 1fr;
+        }
+
+        .order-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .status-form {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="orders-page">
+
+    <div class="container">
+
+        <a asp-controller="Admin"
+           asp-action="Index"
+           class="back-admin">
+            ← Yönetim Paneline Dön
+        </a>
+
+        <div class="orders-header">
+
+            <span>YILDIZ MAĞAZA</span>
+
+            <h1>Siparişler</h1>
+
+            <p>
+                Mağazana gelen siparişleri buradan yönetebilirsin.
+            </p>
+
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            foreach (var order in Model)
+            {
+                <div class="order-card">
+
+                    <div class="order-top">
+
+                        <div class="order-number">
+                            Sipariş #@order.OrderId
+                        </div>
+
+                        <div class="order-date">
+                            @order.OrderDate.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+
+                    </div>
+
+                    <div class="order-info">
+
+                        <div class="info-box">
+                            <span>Müşteri</span>
+                            <strong>
+                                @order.CustomerName
+                            </strong>
+                        </div>
+
+                        <div class="info-box">
+                            <span>E-posta</span>
+                            <strong>
+                                @order.CustomerEmail
+                            </strong>
+                        </div>
+
+                        <div class="info-box">
+                            <span>Adres</span>
+                            <strong>
+                                @order.Address
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="status-box">
+
+                        <label>
+                            Sipariş Durumu
+                        </label>
+
+                        <form asp-controller="Admin"
+                              asp-action="UpdateOrderStatus"
+                              method="post"
+                              class="status-form">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@order.OrderId" />
+
+                            <select name="status"
+                                    class="status-select">
+
+                                <option value="Hazırlanıyor"
+                                        selected="@(order.Status == "Hazırlanıyor")">
+                                    Hazırlanıyor
+                                </option>
+
+                                <option value="Kargoya Verildi"
+                                        selected="@(order.Status == "Kargoya Verildi")">
+                                    Kargoya Verildi
+                                </option>
+
+                                <option value="Teslim Edildi"
+                                        selected="@(order.Status == "Teslim Edildi")">
+                                    Teslim Edildi
+                                </option>
+
+                                <option value="İptal Edildi"
+                                        selected="@(order.Status == "İptal Edildi")">
+                                    İptal Edildi
+                                </option>
+
+                            </select>
+
+                            <button type="submit"
+                                    class="status-button">
+                                Durumu Güncelle
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <div class="order-products">
+
+                        <h3>Ürünler</h3>
+
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <div class="product-row">
+
+                                <div>
+
+                                    <div class="product-name">
+                                        @item.ProductName
+                                    </div>
+
+                                    <div class="product-details">
+                                        @item.Quantity adet ×
+                                        @item.Price.ToString("N2") ₺
+                                    </div>
+
+                                </div>
+
+                                <div class="product-name">
+                                    @((item.Price * item.Quantity).ToString("N2")) ₺
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+                    <div class="order-total">
+
+                        <span>Toplam</span>
+
+                        <span>
+                            @order.TotalPrice.ToString("N2") ₺
+                        </span>
+
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-orders">
+
+                <div class="empty-orders-icon">
+                    📦
+                </div>
+
+                <h2>Henüz sipariş yok</h2>
+
+                <p>
+                    Müşteriler sipariş verdiğinde burada görünecek.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+</div>

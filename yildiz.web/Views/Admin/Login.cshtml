@@ -1,0 +1,184 @@
+﻿@{
+    ViewData["Title"] = "Admin Girişi";
+}
+
+<style>
+    .login-page {
+        min-height: 650px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 60px 20px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 450px;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .login-header span {
+            display: block;
+            color: #f5a800;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .login-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 42px;
+            color: #111827;
+        }
+
+        .login-header p {
+            color: #64748b;
+            margin: 0;
+        }
+
+    .login-field {
+        margin-bottom: 20px;
+    }
+
+        .login-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .login-field input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+            .login-field input:focus {
+                outline: none;
+                border-color: #f5b800;
+            }
+
+    .login-button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        background: #f5b800;
+        color: #111827;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .login-button:hover {
+            background: #e5a900;
+        }
+
+    .login-links {
+        margin-top: 25px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+        .login-links a {
+            color: #111827 !important;
+            text-decoration: none !important;
+            font-weight: 600;
+        }
+
+            .login-links a:hover {
+                color: #f5a800 !important;
+            }
+
+        .login-links span {
+            color: #64748b;
+        }
+
+    .login-error {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+</style>
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <div class="login-header">
+            <span>YILDIZ MAĞAZA</span>
+            <h1>Admin Girişi</h1>
+            <p>Hesabına giriş yap.</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="login-error">
+                @ViewBag.Error
+            </div>
+        }
+
+        <form asp-controller="Admin"
+              asp-action="Login"
+              method="post">
+
+            <div class="login-field">
+                <label>Kullanıcı Adı</label>
+
+                <input type="text"
+                       name="username"
+                       placeholder="Kullanıcı adını gir"
+                       required />
+            </div>
+
+            <div class="login-field">
+                <label>Şifre</label>
+
+                <input type="password"
+                       name="password"
+                       placeholder="Şifreni gir"
+                       required />
+            </div>
+
+            <button type="submit" class="login-button">
+                Giriş Yap
+            </button>
+
+        </form>
+
+        <div class="login-links">
+
+            <a asp-controller="Account"
+               asp-action="ForgotPassword">
+                Şifremi Unuttum
+            </a>
+
+            <span>
+                Hesabın yok mu?
+                <a asp-controller="Admin"
+                   asp-action="Register">
+                    Kayıt Ol
+                </a>
+            </span>
+
+        </div>
+
+    </div>
+
+</div>

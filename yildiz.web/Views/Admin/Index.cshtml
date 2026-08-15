@@ -1,0 +1,167 @@
+﻿@{
+    ViewData["Title"] = "Yönetim Paneli";
+}
+
+<style>
+    .admin-panel {
+        padding: 30px 0 60px 0;
+    }
+
+    .admin-panel-header {
+        margin-bottom: 40px;
+    }
+
+    .admin-panel-header span {
+        display: block;
+        color: #f5a800;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .admin-panel-header h1 {
+        font-size: 52px;
+        margin: 0 0 10px 0;
+        color: #111827;
+        font-weight: 700;
+    }
+
+    .admin-panel-header p {
+        font-size: 20px;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .admin-panel-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        max-width: 900px;
+    }
+
+    .admin-panel-card {
+        display: block;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 20px;
+        text-decoration: none !important;
+        color: #111827 !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+        transition: 0.2s;
+    }
+
+    .admin-panel-card:hover {
+        transform: translateY(-5px);
+        color: #111827 !important;
+        text-decoration: none !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .admin-panel-icon {
+        font-size: 42px;
+        margin-bottom: 15px;
+    }
+
+    .admin-panel-card h2 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+        color: #111827 !important;
+        font-weight: 700;
+    }
+
+    .admin-panel-card p {
+        margin: 0;
+        color: #64748b !important;
+        font-size: 16px;
+    }
+
+    @@media (max-width: 768px) {
+        .admin-panel-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-panel-header h1 {
+            font-size: 40px;
+        }
+    }
+</style>
+
+<div class="admin-panel">
+
+    <div class="admin-panel-header">
+        <span>YILDIZ MAĞAZA</span>
+
+        <h1>Yönetim Paneli</h1>
+
+        <p>Mağazanı buradan yönetebilirsin.</p>
+    </div>
+
+    <div class="admin-panel-grid">
+
+        <a asp-controller="Admin"
+           asp-action="Orders"
+           class="admin-panel-card">
+
+            <div class="admin-panel-icon">📋</div>
+
+            <h2>Siparişler</h2>
+
+            <p>Gelen siparişleri görüntüle.</p>
+
+        </a>
+
+        <a asp-controller="Product"
+           asp-action="Index"
+           class="admin-panel-card">
+
+            <div class="admin-panel-icon">📦</div>
+
+            <h2>Ürünler</h2>
+
+            <p>Ürünleri görüntüle ve yönet.</p>
+
+        </a>
+
+
+        <a asp-controller="Product"
+           asp-action="Add"
+           class="admin-panel-card">
+
+            <div class="admin-panel-icon">➕</div>
+
+            <h2>Ürün Ekle</h2>
+
+            <p>Yeni ürün oluştur.</p>
+
+        </a>
+
+
+        <a asp-controller="Category"
+           asp-action="Index"
+           class="admin-panel-card">
+
+            <div class="admin-panel-icon">📂</div>
+
+            <h2>Kategoriler</h2>
+
+            <p>Kategorileri görüntüle ve yönet.</p>
+
+        </a>
+
+
+        <a asp-controller="Category"
+           asp-action="Add"
+           class="admin-panel-card">
+
+            <div class="admin-panel-icon">➕</div>
+
+            <h2>Kategori Ekle</h2>
+
+            <p>Yeni kategori oluştur.</p>
+
+        </a>
+
+    </div>
+
+</div>

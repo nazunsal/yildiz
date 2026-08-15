@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-badge">YILDIZ'A HOŞ GELDİNİZ</span>
+            <h1>Aradığın Her Şey<br />Yıldız'da.</h1>
+            <p>Kaliteli ürünler, uygun fiyatlar ve güvenli alışveriş deneyimi.</p>
+
+            <a asp-controller="Account"
+               asp-action="Login"
+               class="hero-button">
+                Alışverişe Başla
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="category-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <span>KATEGORİLER</span>
+            <h2>Ne arıyorsun?</h2>
+        </div>
+
+        <div class="category-grid">
+
+            <a asp-controller="Category"
+               asp-action="Index"
+               class="category-card">
+                <div class="category-icon">💻</div>
+                <h3>Bilgisayar</h3>
+                <p>Teknoloji ürünleri</p>
+            </a>
+
+            <a asp-controller="Category"
+               asp-action="Index"
+               class="category-card">
+                <div class="category-icon">📱</div>
+                <h3>Telefon</h3>
+                <p>Mobil dünyayı keşfet</p>
+            </a>
+
+            <a asp-controller="Category"
+               asp-action="Index"
+               class="category-card">
+                <div class="category-icon">🎧</div>
+                <h3>Aksesuar</h3>
+                <p>Tamamlayıcı ürünler</p>
+            </a>
+
+            <a asp-controller="Category"
+               asp-action="Index"
+               class="category-card">
+                <div class="category-icon">⚡</div>
+                <h3>Elektronik</h3>
+                <p>Yeni nesil teknoloji</p>
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="feature-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <span>NEDEN YILDIZ?</span>
+            <h2>Alışveriş artık daha kolay</h2>
+        </div>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">🚚</div>
+                <h3>Hızlı Teslimat</h3>
+                <p>Siparişlerin en kısa sürede kapında.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Güvenli Alışveriş</h3>
+                <p>Kişisel bilgilerin güvenli şekilde korunur.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💳</div>
+                <h3>Kolay Ödeme</h3>
+                <p>Pratik ve güvenli ödeme seçenekleri.</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+
+            <h2>Alışverişe hazır mısın?</h2>
+
+            <p>Yıldız'daki ürünleri keşfetmeye hemen başla.</p>
+
+            <a asp-controller="Account"
+               asp-action="Login"
+               class="hero-button">
+                Alışverişe Başla
+            </a>
+
+        </div>
+    </div>
+</section>

@@ -1,0 +1,20 @@
+﻿@model yildiz.entities.Concrete.Category
+
+<h2>Yeni Kategori Ekle</h2>
+
+<form asp-action="Add" method="post">
+
+    <div class="mb-3">
+        <label>Kategori Adı</label>
+        <input asp-for="CategoryName" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Kaydet
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Vazgeç
+    </a>
+
+</form>
