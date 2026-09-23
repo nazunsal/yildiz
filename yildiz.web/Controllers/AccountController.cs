@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using yildiz.business.Abstract;
 using yildiz.entities.Concrete;
+using yildiz.web.Services;
 
 namespace yildiz.web.Controllers;
 
@@ -13,13 +14,16 @@ public class AccountController : Controller
 {
     private readonly IUserService _userService;
     private readonly IPasswordResetTokenService _passwordResetTokenService;
+    private readonly EmailService _emailService;
 
     public AccountController(
         IUserService userService,
-        IPasswordResetTokenService passwordResetTokenService)
+        IPasswordResetTokenService passwordResetTokenService,
+        EmailService emailService)
     {
         _userService = userService;
         _passwordResetTokenService = passwordResetTokenService;
+        _emailService = emailService;
     }
 
     public IActionResult Login(string returnUrl = null)
@@ -48,7 +52,9 @@ public class AccountController : Controller
         {
             new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-            new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
+            new Claim(
+                ClaimTypes.Role,
+                user.IsAdmin ? "Admin" : "User")
         };
 
         var identity = new ClaimsIdentity(
@@ -111,7 +117,8 @@ public class AccountController : Controller
 
         if (existingUsername != null)
         {
-            ViewBag.Error = "Bu kullanıcı adı zaten kullanılıyor.";
+            ViewBag.Error =
+                "Bu kullanıcı adı zaten kullanılıyor.";
             return View();
         }
 
@@ -139,7 +146,9 @@ public class AccountController : Controller
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(
+                ClaimTypes.NameIdentifier,
+                user.UserId.ToString()),
             new Claim(ClaimTypes.Role, "User")
         };
 
@@ -211,9 +220,38 @@ public class AccountController : Controller
 
         await _passwordResetTokenService.CreateAsync(resetToken);
 
-        return RedirectToAction(
-            "ResetPassword",
-            new { token });
+        var resetLink =
+            Url.Action(
+                "ResetPassword",
+                "Account",
+                new { token },
+                Request.Scheme);
+
+        if (string.IsNullOrEmpty(resetLink))
+        {
+            ViewBag.Error =
+                "Şifre sıfırlama bağlantısı oluşturulamadı.";
+            return View();
+        }
+
+        try
+        {
+            await _emailService.SendPasswordResetEmailAsync(
+                user.Email,
+                user.Username,
+                resetLink);
+        }
+        catch
+        {
+            ViewBag.Error =
+                "Şifre sıfırlama e-postası gönderilemedi.";
+            return View();
+        }
+
+        ViewBag.Success =
+            "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.";
+
+        return View();
     }
 
     [HttpGet]

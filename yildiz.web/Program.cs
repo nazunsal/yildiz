@@ -5,6 +5,7 @@ using yildiz.business.Concrete;
 using yildiz.DataAccess.Abstract;
 using yildiz.DataAccess.Concrete;
 using yildiz.DataAccess.Context;
+using yildiz.web.Services;
 
 namespace yildiz.web
 {
@@ -72,6 +73,8 @@ namespace yildiz.web
             builder.Services.AddScoped<
                 IPasswordResetTokenService,
                 PasswordResetTokenManager>();
+
+            builder.Services.AddScoped<EmailService>();
 
             var app = builder.Build();
 
