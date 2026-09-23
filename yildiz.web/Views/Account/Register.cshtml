@@ -138,6 +138,8 @@
               asp-action="Register"
               method="post">
 
+            @Html.AntiForgeryToken()
+
             <div class="register-field">
 
                 <label>Ad Soyad</label>
@@ -178,7 +180,12 @@
                 <input type="password"
                        name="password"
                        placeholder="Şifre"
+                       minlength="6"
                        required />
+
+                <small>
+                    Şifreniz en az 6 karakter olmalıdır.
+                </small>
 
             </div>
 
@@ -189,6 +196,7 @@
                 <input type="password"
                        name="confirmPassword"
                        placeholder="Şifreyi tekrar gir"
+                       minlength="6"
                        required />
 
             </div>

@@ -51,7 +51,9 @@ public class AccountController : Controller
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(
+                ClaimTypes.NameIdentifier,
+                user.UserId.ToString()),
             new Claim(
                 ClaimTypes.Role,
                 user.IsAdmin ? "Admin" : "User")
@@ -106,6 +108,15 @@ public class AccountController : Controller
         string password,
         string confirmPassword)
     {
+        if (string.IsNullOrWhiteSpace(password) ||
+            password.Length < 6)
+        {
+            ViewBag.Error =
+                "Şifre en az 6 karakter olmalıdır.";
+
+            return View();
+        }
+
         if (password != confirmPassword)
         {
             ViewBag.Error = "Şifreler eşleşmiyor.";
@@ -119,6 +130,7 @@ public class AccountController : Controller
         {
             ViewBag.Error =
                 "Bu kullanıcı adı zaten kullanılıyor.";
+
             return View();
         }
 
@@ -129,6 +141,7 @@ public class AccountController : Controller
         {
             ViewBag.Error =
                 "Bu e-posta adresi zaten kullanılıyor.";
+
             return View();
         }
 
@@ -190,6 +203,7 @@ public class AccountController : Controller
         {
             ViewBag.Error =
                 "Kullanıcı adı veya e-posta bulunamadı.";
+
             return View();
         }
 
@@ -231,6 +245,7 @@ public class AccountController : Controller
         {
             ViewBag.Error =
                 "Şifre sıfırlama bağlantısı oluşturulamadı.";
+
             return View();
         }
 
@@ -245,6 +260,7 @@ public class AccountController : Controller
         {
             ViewBag.Error =
                 "Şifre sıfırlama e-postası gönderilemedi.";
+
             return View();
         }
 
@@ -302,10 +318,22 @@ public class AccountController : Controller
             return RedirectToAction("ForgotPassword");
         }
 
+        if (string.IsNullOrWhiteSpace(password) ||
+            password.Length < 6)
+        {
+            ViewBag.Error =
+                "Şifre en az 6 karakter olmalıdır.";
+
+            ViewBag.Token = token;
+
+            return View();
+        }
+
         if (password != confirmPassword)
         {
             ViewBag.Error = "Şifreler eşleşmiyor.";
             ViewBag.Token = token;
+
             return View();
         }
 
