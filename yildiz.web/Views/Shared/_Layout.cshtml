@@ -25,8 +25,6 @@
 
         <div class="container">
 
-            <!-- LOGO -->
-
             <a class="navbar-brand fw-bold"
                asp-controller="Home"
                asp-action="Index">
@@ -34,9 +32,6 @@
                 ⭐ YILDIZ
 
             </a>
-
-
-            <!-- MOBİL MENÜ -->
 
             <button class="navbar-toggler"
                     type="button"
@@ -50,14 +45,10 @@
 
             </button>
 
-
             <div class="collapse navbar-collapse"
                  id="mainNavbar">
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-
-                    <!-- ANA SAYFA -->
 
                     <li class="nav-item">
 
@@ -71,9 +62,6 @@
 
                     </li>
 
-
-                    <!-- ÜRÜNLER -->
-
                     <li class="nav-item">
 
                         <a class="nav-link"
@@ -85,9 +73,6 @@
                         </a>
 
                     </li>
-
-
-                    <!-- KATEGORİLER -->
 
                     <li class="nav-item">
 
@@ -101,9 +86,6 @@
 
                     </li>
 
-
-                    <!-- SEPET -->
-
                     <li class="nav-item">
 
                         <a class="nav-link"
@@ -116,14 +98,11 @@
 
                     </li>
 
-
-                    <!-- YÖNETİM -->
-
                     <li class="nav-item">
 
                         <a class="nav-link"
                            asp-controller="Admin"
-                           asp-action="Login">
+                           asp-action="Index">
 
                             ⚙️ Yönetim
 
@@ -131,11 +110,8 @@
 
                     </li>
 
-
                     @if (Context.Session.GetString("IsAdmin") == "true")
                     {
-                        <!-- ADMİN GİRİŞ YAPMIŞ -->
-
                         <li class="nav-item">
 
                             <span class="nav-link">
@@ -160,8 +136,6 @@
                     }
                     else if (Context.Session.GetString("IsLoggedIn") == "true")
                     {
-                        <!-- MÜŞTERİ GİRİŞ YAPMIŞ -->
-
                         <li class="nav-item">
 
                             <span class="nav-link">
@@ -186,8 +160,6 @@
                     }
                     else
                     {
-                        <!-- HİÇBİR GİRİŞ YOK -->
-
                         <li class="nav-item">
 
                             <a class="nav-link"
@@ -209,17 +181,11 @@
 
     </nav>
 
-
-    <!-- SAYFA İÇERİĞİ -->
-
     <main class="container py-4">
 
         @RenderBody()
 
     </main>
-
-
-    <!-- FOOTER -->
 
     <footer class="border-top py-4 mt-5">
 
@@ -240,9 +206,6 @@
         </div>
 
     </footer>
-
-
-    <!-- JAVASCRIPT -->
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 

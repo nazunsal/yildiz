@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using yildiz.business.Abstract;
-using yildiz.DataAccess.Context;
 using yildiz.entities.Concrete;
 using yildiz.web.Models;
 
@@ -9,14 +8,14 @@ namespace yildiz.web.Controllers;
 public class CheckoutController : Controller
 {
     private readonly IProductService _productService;
-    private readonly AppDbContext _context;
+    private readonly IOrderService _orderService;
 
     public CheckoutController(
         IProductService productService,
-        AppDbContext context)
+        IOrderService orderService)
     {
         _productService = productService;
-        _context = context;
+        _orderService = orderService;
     }
 
     [HttpGet]
@@ -149,9 +148,7 @@ public class CheckoutController : Controller
         order.TotalPrice = order.OrderItems
             .Sum(x => x.Price * x.Quantity);
 
-        _context.Orders.Add(order);
-
-        await _context.SaveChangesAsync();
+        await _orderService.AddAsync(order);
 
         HttpContext.Session.SetObject(
             "Cart",
@@ -165,7 +162,7 @@ public class CheckoutController : Controller
     [HttpGet]
     public async Task<IActionResult> Success(int id)
     {
-        var order = await _context.Orders.FindAsync(id);
+        var order = await _orderService.GetByIdAsync(id);
 
         if (order == null)
         {

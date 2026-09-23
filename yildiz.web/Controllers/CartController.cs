@@ -13,6 +13,8 @@ public class CartController : Controller
         _productService = productService;
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Add(int id)
     {
         if (HttpContext.Session.GetString("IsLoggedIn") != "true")
@@ -20,7 +22,7 @@ public class CartController : Controller
             return RedirectToAction(
                 "Login",
                 "Account",
-                new { returnUrl = Url.Action("Add", "Cart", new { id }) }
+                new { returnUrl = Url.Action("Index", "Cart") }
             );
         }
 
@@ -57,6 +59,7 @@ public class CartController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var cart = HttpContext.Session.GetObject<List<CartItem>>("Cart")
@@ -81,6 +84,8 @@ public class CartController : Controller
         return View(products);
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Increase(int id)
     {
         var cart = HttpContext.Session.GetObject<List<CartItem>>("Cart")
@@ -99,6 +104,8 @@ public class CartController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Decrease(int id)
     {
         var cart = HttpContext.Session.GetObject<List<CartItem>>("Cart")
@@ -121,6 +128,8 @@ public class CartController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Remove(int id)
     {
         var cart = HttpContext.Session.GetObject<List<CartItem>>("Cart")

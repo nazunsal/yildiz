@@ -26,11 +26,13 @@ public class CategoryManager : ICategoryService
     public async Task AddAsync(Category category)
     {
         await _categoryRepository.AddAsync(category);
+        await _categoryRepository.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Category category)
     {
         await _categoryRepository.UpdateAsync(category);
+        await _categoryRepository.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
@@ -40,6 +42,7 @@ public class CategoryManager : ICategoryService
         if (category != null)
         {
             await _categoryRepository.DeleteAsync(category);
+            await _categoryRepository.SaveChangesAsync();
         }
     }
 }

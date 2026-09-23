@@ -30,18 +30,20 @@ public class GenericRepository<T> : IGenericRepository<T>
     public async Task AddAsync(T entity)
     {
         await _table.AddAsync(entity);
-        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(T entity)
     {
         _table.Update(entity);
-        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(T entity)
     {
         _table.Remove(entity);
+    }
+
+    public async Task SaveChangesAsync()
+    {
         await _context.SaveChangesAsync();
     }
 }

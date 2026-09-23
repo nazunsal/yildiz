@@ -80,23 +80,33 @@
 
                             <div class="quantity-control">
 
-                                <a asp-controller="Cart"
-                                   asp-action="Decrease"
-                                   asp-route-id="@item.Product.ProductId"
-                                   class="quantity-button">
-                                    −
-                                </a>
+                                <form asp-controller="Cart"
+                                      asp-action="Decrease"
+                                      asp-route-id="@item.Product.ProductId"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="quantity-button">
+                                        −
+                                    </button>
+                                </form>
 
                                 <span class="quantity">
                                     @item.Quantity
                                 </span>
 
-                                <a asp-controller="Cart"
-                                   asp-action="Increase"
-                                   asp-route-id="@item.Product.ProductId"
-                                   class="quantity-button">
-                                    +
-                                </a>
+                                <form asp-controller="Cart"
+                                      asp-action="Increase"
+                                      asp-route-id="@item.Product.ProductId"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="quantity-button">
+                                        +
+                                    </button>
+                                </form>
 
                             </div>
 
@@ -104,12 +114,17 @@
                                 @((item.Product.Price * item.Quantity).ToString("N2")) ₺
                             </div>
 
-                            <a asp-controller="Cart"
-                               asp-action="Remove"
-                               asp-route-id="@item.Product.ProductId"
-                               class="remove-button">
-                                🗑 Sil
-                            </a>
+                            <form asp-controller="Cart"
+                                  asp-action="Remove"
+                                  asp-route-id="@item.Product.ProductId"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="remove-button">
+                                    🗑 Sil
+                                </button>
+                            </form>
 
                         </div>
 
@@ -134,17 +149,21 @@
                     </strong>
                 </div>
 
-                <a asp-controller="Checkout"
-                   asp-action="Index"
-                   class="checkout-button">
-                    Ödemeye Geç
-                </a>
+                <div class="summary-actions">
 
-                <a asp-controller="Product"
-                   asp-action="Index"
-                   class="continue-shopping">
-                    Alışverişe Devam Et
-                </a>
+                    <a asp-controller="Checkout"
+                       asp-action="Index"
+                       class="checkout-button">
+                        Ödemeye Geç
+                    </a>
+
+                    <a asp-controller="Product"
+                       asp-action="Index"
+                       class="continue-shopping">
+                        Alışverişe Devam Et
+                    </a>
+
+                </div>
 
             </div>
 
@@ -156,249 +175,342 @@
 <style>
 
     .cart-page {
-        max-width: 1200px;
-        margin: 50px auto;
-        padding: 0 25px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 25px;
+    box-sizing: border-box;
+    overflow-x: hidden;
     }
 
     .cart-header {
-        margin-bottom: 35px;
+    margin-bottom: 35px;
     }
 
-        .cart-header span {
-            color: #f59e0b;
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: 2px;
-        }
+    .cart-header span {
+    color: #f59e0b;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    }
 
-        .cart-header h1 {
-            color: #111827;
-            font-size: 52px;
-            font-weight: 800;
-            margin: 8px 0;
-        }
+    .cart-header h1 {
+    color: #111827;
+    font-size: 52px;
+    font-weight: 800;
+    margin: 8px 0;
+    }
 
-        .cart-header p {
-            color: #6b7280;
-            font-size: 18px;
-        }
+    .cart-header p {
+    color: #6b7280;
+    font-size: 18px;
+    }
 
     .cart-empty {
-        background: white;
-        border-radius: 20px;
-        padding: 70px 30px;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    background: white;
+    border-radius: 20px;
+    padding: 70px 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
     }
 
     .cart-empty-icon {
-        font-size: 65px;
-        margin-bottom: 20px;
+    font-size: 65px;
+    margin-bottom: 20px;
     }
 
     .cart-empty h2 {
-        color: #111827;
-        font-size: 30px;
-        margin-bottom: 10px;
+    color: #111827;
+    font-size: 30px;
+    margin-bottom: 10px;
     }
 
     .cart-empty p {
-        color: #6b7280;
-        font-size: 17px;
-        margin-bottom: 25px;
+    color: #6b7280;
+    font-size: 17px;
+    margin-bottom: 25px;
     }
 
     .continue-shopping {
-        display: inline-block;
-        padding: 13px 24px;
-        border-radius: 10px;
-        background: #fbbf24;
-        color: #111827 !important;
-        text-decoration: none !important;
-        font-weight: 700;
-        transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 24px;
+    border-radius: 10px;
+    background: #fbbf24;
+    color: #111827 !important;
+    text-decoration: none !important;
+    font-weight: 700;
+    transition: 0.2s;
+    box-sizing: border-box;
     }
 
-        .continue-shopping:hover {
-            background: #f59e0b;
-        }
+    .continue-shopping:hover {
+    background: #f59e0b;
+    }
 
     .cart-layout {
-        display: grid;
-        grid-template-columns: 1fr 380px;
-        gap: 30px;
-        align-items: start;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+    gap: 30px;
+    align-items: start;
+    width: 100%;
+    box-sizing: border-box;
     }
 
     .cart-products {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
     }
 
     .cart-item {
-        background: white;
-        border-radius: 18px;
-        padding: 25px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 25px;
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    min-width: 0;
+    box-sizing: border-box;
+    }
+
+    .cart-item-info {
+    min-width: 0;
+    flex: 1;
     }
 
     .cart-item-info h3 {
-        color: #111827;
-        margin: 0 0 10px 0;
-        font-size: 21px;
+    color: #111827;
+    margin: 0 0 10px 0;
+    font-size: 21px;
+    word-break: break-word;
     }
 
     .cart-item-info p {
-        color: #6b7280;
-        margin: 0;
+    color: #6b7280;
+    margin: 0;
     }
 
     .cart-item-actions {
-        display: flex;
-        align-items: center;
-        gap: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+    }
+
+    .cart-item-actions form {
+    margin: 0;
+    padding: 0;
     }
 
     .quantity-control {
-        display: flex;
-        align-items: center;
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        overflow: hidden;
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    }
+
+    .quantity-control form {
+    display: flex;
+    margin: 0;
+    padding: 0;
     }
 
     .quantity-button {
-        width: 38px;
-        height: 38px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-decoration: none;
-        color: #111827;
-        font-size: 20px;
-        font-weight: 700;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background: white;
+    cursor: pointer;
+    color: #111827;
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 700;
     }
 
-        .quantity-button:hover {
-            background: #f3f4f6;
-        }
+    .quantity-button:hover {
+    background: #f3f4f6;
+    }
 
     .quantity {
-        width: 40px;
-        text-align: center;
-        font-weight: 700;
+    width: 40px;
+    text-align: center;
+    font-weight: 700;
+    flex-shrink: 0;
     }
 
     .cart-item-total {
-        font-size: 18px;
-        font-weight: 800;
-        color: #111827;
-        min-width: 100px;
-        text-align: right;
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+    min-width: 100px;
+    text-align: right;
+    white-space: nowrap;
     }
 
     .remove-button {
-        color: #dc2626;
-        text-decoration: none;
-        font-weight: 600;
+    color: #dc2626;
+    text-decoration: none;
+    font-weight: 600;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    white-space: nowrap;
     }
 
-        .remove-button:hover {
-            color: #991b1b;
-        }
+    .remove-button:hover {
+    color: #991b1b;
+    }
 
     .cart-summary {
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
-        position: sticky;
-        top: 20px;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+    position: sticky;
+    top: 20px;
+    min-width: 0;
+    box-sizing: border-box;
     }
 
-        .cart-summary h2 {
-            margin-top: 0;
-            color: #111827;
-            margin-bottom: 25px;
-        }
+    .cart-summary h2 {
+    margin-top: 0;
+    color: #111827;
+    margin-bottom: 25px;
+    font-size: 32px;
+    }
 
     .summary-line {
-        display: flex;
-        justify-content: space-between;
-        padding: 15px 0;
-        color: #6b7280;
-        border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
     }
 
-        .summary-line strong {
-            color: #111827;
-        }
+    .summary-line strong {
+    color: #111827;
+    }
 
     .total-line {
-        margin-top: 10px;
-        padding-top: 20px;
-        border-top: 2px solid #111827;
-        border-bottom: none;
-        font-size: 21px;
-        font-weight: 800;
+    margin-top: 10px;
+    padding-top: 20px;
+    border-top: 2px solid #111827;
+    border-bottom: none;
+    font-size: 21px;
+    font-weight: 800;
+    }
+
+    .summary-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 20px;
     }
 
     .checkout-button {
-        display: block;
-        width: 100%;
-        padding: 15px;
-        margin-top: 20px;
-        border-radius: 12px;
-        background: #fbbf24;
-        color: #111827 !important;
-        text-align: center;
-        text-decoration: none !important;
-        font-size: 17px;
-        font-weight: 800;
-        box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    height: 54px;
+    padding: 15px;
+    margin: 0;
+    border-radius: 12px;
+    background: #fbbf24;
+    color: #111827 !important;
+    text-align: center;
+    text-decoration: none !important;
+    font-size: 17px;
+    font-weight: 800;
+    box-sizing: border-box;
     }
 
-        .checkout-button:hover {
-            background: #f59e0b;
-        }
+    .checkout-button:hover {
+    background: #f59e0b;
+    }
 
     .cart-summary .continue-shopping {
-        display: block;
-        text-align: center;
-        margin-top: 12px;
-        background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    height: 54px;
+    padding: 13px 24px;
+    margin: 0;
+    border-radius: 10px;
+    background: #f3f4f6;
+    color: #111827 !important;
+    text-align: center;
+    box-sizing: border-box;
     }
 
-        .cart-summary .continue-shopping:hover {
-            background: #e5e7eb;
-        }
+    .cart-summary .continue-shopping:hover {
+    background: #e5e7eb;
+    }
+
+    @@media (max-width: 1000px) {
+
+    .cart-layout {
+    grid-template-columns: 1fr;
+    }
+
+    .cart-summary {
+    position: static;
+    }
+    }
 
     @@media (max-width: 850px) {
 
-        .cart-layout {
-            grid-template-columns: 1fr;
-        }
-
-        .cart-item {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .cart-item-actions {
-            width: 100%;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .cart-header h1 {
-            font-size: 40px;
-        }
+    .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
     }
 
-</style>
+    .cart-item-actions {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    }
+
+    .cart-header h1 {
+    font-size: 40px;
+    }
+    }
+
+    @@media (max-width: 550px) {
+
+    .cart-page {
+    padding: 0 15px;
+    }
+
+    .cart-item {
+    padding: 20px;
+    }
+
+    .cart-item-actions {
+    gap: 12px;
+    width: 100%;
+    }
+
+    .cart-item-total {
+    min-width: auto;
+    }
+
+    .cart-summary {
+    padding: 22

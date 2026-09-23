@@ -1,22 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using yildiz.business.Abstract;
 using yildiz.entities.Concrete;
-using yildiz.DataAccess.Context;
-using Microsoft.EntityFrameworkCore;
 
 namespace yildiz.web.Controllers;
 
 public class ProductController : Controller
 {
     private readonly IProductService _productService;
-    private readonly AppDbContext _context;
+    private readonly ICategoryService _categoryService;
 
     public ProductController(
         IProductService productService,
-        AppDbContext context)
+        ICategoryService categoryService)
     {
         _productService = productService;
-        _context = context;
+        _categoryService = categoryService;
     }
 
     private bool IsAdmin()
@@ -58,7 +56,7 @@ public class ProductController : Controller
             return RedirectToAction("Login", "Admin");
         }
 
-        var categories = await _context.Categories.ToListAsync();
+        var categories = await _categoryService.GetAllAsync();
 
         ViewBag.Categories = categories;
 
@@ -66,6 +64,7 @@ public class ProductController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Add(Product product)
     {
         if (!IsAdmin())
@@ -80,7 +79,7 @@ public class ProductController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var categories = await _context.Categories.ToListAsync();
+        var categories = await _categoryService.GetAllAsync();
 
         ViewBag.Categories = categories;
 
@@ -113,7 +112,7 @@ public class ProductController : Controller
             return NotFound();
         }
 
-        var categories = await _context.Categories.ToListAsync();
+        var categories = await _categoryService.GetAllAsync();
 
         ViewBag.Categories = categories;
 
@@ -121,6 +120,7 @@ public class ProductController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update(Product product)
     {
         if (!IsAdmin())
@@ -135,13 +135,15 @@ public class ProductController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var categories = await _context.Categories.ToListAsync();
+        var categories = await _categoryService.GetAllAsync();
 
         ViewBag.Categories = categories;
 
         return View(product);
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
         if (!IsAdmin())

@@ -1,6 +1,8 @@
-﻿namespace yildiz.entities.Concrete;
+﻿using yildiz.entities.Abstract;
 
-public class Order
+namespace yildiz.entities.Concrete;
+
+public class Order : IEntity
 {
     public int OrderId { get; set; }
 

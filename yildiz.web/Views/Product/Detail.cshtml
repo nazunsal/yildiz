@@ -97,6 +97,8 @@
         padding: 15px 25px;
         border-radius: 11px;
         text-decoration: none;
+        border: none;
+        cursor: pointer;
         font-size: 17px;
         font-weight: 800;
     }
@@ -193,14 +195,17 @@
 
                     @if (Model.Stock > 0)
                     {
-                        <a asp-controller="Cart"
-                           asp-action="Add"
-                           asp-route-id="@Model.ProductId"
-                           class="add-cart-button">
+                        <form asp-controller="Cart"
+                              asp-action="Add"
+                              asp-route-id="@Model.ProductId"
+                              method="post">
+                            @Html.AntiForgeryToken()
 
-                            🛒 Sepete Ekle
-
-                        </a>
+                            <button type="submit"
+                                    class="add-cart-button">
+                                🛒 Sepete Ekle
+                            </button>
+                        </form>
                     }
 
                     <a asp-controller="Product"

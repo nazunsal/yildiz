@@ -28,11 +28,15 @@
                         Güncelle
                     </a>
 
-                    <a asp-action="Delete"
-                       asp-route-id="@item.CategoryId"
-                       class="btn btn-danger">
-                        Sil
-                    </a>
+                    <form asp-action="Delete"
+                          asp-route-id="@item.CategoryId"
+                          method="post"
+                          style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">
+                            Sil
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

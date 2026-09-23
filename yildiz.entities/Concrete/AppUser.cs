@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using yildiz.entities.Abstract;
 
 namespace yildiz.entities.Concrete;
 
-public class AppUser
+public class AppUser : IEntity
 {
     [Key]
     public int UserId { get; set; }

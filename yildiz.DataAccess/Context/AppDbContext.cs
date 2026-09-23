@@ -20,6 +20,8 @@ public class AppDbContext : DbContext
 
     public DbSet<AppUser> Users { get; set; }
 
+    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>().HasData(
@@ -30,17 +32,19 @@ public class AppDbContext : DbContext
             }
         );
 
-        modelBuilder.Entity<AppUser>().HasData(
-            new AppUser
-            {
-                UserId = 1,
-                Name = "Yıldız Admin",
-                Username = "admin",
-                Email = "admin@yildiz.com",
-                Password = "1234",
-                IsAdmin = true
-            }
-        );
+        modelBuilder.Entity<PasswordResetToken>()
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AppUser>()
+            .HasIndex(x => x.Username)
+            .IsUnique();
+
+        modelBuilder.Entity<AppUser>()
+            .HasIndex(x => x.Email)
+            .IsUnique();
 
         base.OnModelCreating(modelBuilder);
     }

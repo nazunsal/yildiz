@@ -26,11 +26,13 @@ public class ProductManager : IProductService
     public async Task AddAsync(Product product)
     {
         await _productRepository.AddAsync(product);
+        await _productRepository.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Product product)
     {
         await _productRepository.UpdateAsync(product);
+        await _productRepository.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
@@ -40,6 +42,7 @@ public class ProductManager : IProductService
         if (product != null)
         {
             await _productRepository.DeleteAsync(product);
+            await _productRepository.SaveChangesAsync();
         }
     }
 }

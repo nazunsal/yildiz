@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+**/yildiz.db
+**/*.db-shm
+**/*.db-wal
+/yildiz.web/yildiz.db

@@ -1,109 +1,54 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using yildiz.DataAccess.Context;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using yildiz.business.Abstract;
 
 namespace yildiz.web.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IOrderService _orderService;
 
-    public AdminController(AppDbContext context)
+    public AdminController(IOrderService orderService)
     {
-        _context = context;
+        _orderService = orderService;
     }
 
     public IActionResult Login(string returnUrl = null)
     {
-        if (HttpContext.Session.GetString("IsLoggedIn") == "true")
+        if (!string.IsNullOrEmpty(returnUrl))
         {
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(
+                "Login",
+                "Account",
+                new { returnUrl });
         }
 
-        ViewBag.ReturnUrl = returnUrl;
-
-        return View();
-    }
-
-    [HttpPost]
-    public IActionResult Login(
-        string username,
-        string password,
-        string returnUrl = null)
-    {
-        if (HttpContext.Session.GetString("IsLoggedIn") == "true")
-        {
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        if (username == "admin" && password == "1234")
-        {
-            HttpContext.Session.SetString("IsLoggedIn", "true");
-            HttpContext.Session.SetString("Username", username);
-            HttpContext.Session.SetString("IsAdmin", "true");
-            HttpContext.Session.SetString("AdminUsername", username);
-
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        ViewBag.Error = "Kullanıcı adı veya şifre hatalı.";
-        ViewBag.ReturnUrl = returnUrl;
-
-        return View();
+        return RedirectToAction("Login", "Account");
     }
 
     public IActionResult Index()
     {
-        if (HttpContext.Session.GetString("IsLoggedIn") != "true")
-        {
-            return RedirectToAction(nameof(Login));
-        }
-
         return View();
     }
 
     [HttpGet]
     public async Task<IActionResult> Orders()
     {
-        if (HttpContext.Session.GetString("IsLoggedIn") != "true")
-        {
-            return RedirectToAction(nameof(Login));
-        }
-
-        var orders = await _context.Orders
-            .Include(x => x.OrderItems)
-            .OrderByDescending(x => x.OrderDate)
-            .ToListAsync();
+        var orders = await _orderService.GetAllWithItemsAsync();
 
         return View(orders);
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateOrderStatus(
         int id,
         string status)
     {
-        if (HttpContext.Session.GetString("IsLoggedIn") != "true")
-        {
-            return RedirectToAction(nameof(Login));
-        }
-
-        var order = await _context.Orders.FindAsync(id);
+        var order = await _orderService.GetByIdAsync(id);
 
         if (order == null)
         {
@@ -122,16 +67,19 @@ public class AdminController : Controller
         {
             order.Status = status;
 
-            await _context.SaveChangesAsync();
+            await _orderService.UpdateAsync(order);
         }
 
         return RedirectToAction(nameof(Orders));
     }
 
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme);
+
         HttpContext.Session.Clear();
 
-        return RedirectToAction(nameof(Login));
+        return RedirectToAction("Login", "Account");
     }
 }

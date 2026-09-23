@@ -1,74 +1,89 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using yildiz.DataAccess.Context;
+﻿using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using yildiz.business.Abstract;
 using yildiz.entities.Concrete;
 
 namespace yildiz.web.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IUserService _userService;
+    private readonly IPasswordResetTokenService _passwordResetTokenService;
 
-    public AccountController(AppDbContext context)
+    public AccountController(
+        IUserService userService,
+        IPasswordResetTokenService passwordResetTokenService)
     {
-        _context = context;
+        _userService = userService;
+        _passwordResetTokenService = passwordResetTokenService;
     }
 
     public IActionResult Login(string returnUrl = null)
     {
         ViewBag.ReturnUrl = returnUrl;
-
         return View();
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(
         string username,
         string password,
         string returnUrl = null)
     {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(x =>
-                x.Username == username &&
-                x.Password == password);
+        var user = await _userService.GetByUsernameAsync(username);
 
-        if (user == null)
+        if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
             ViewBag.Error = "Kullanıcı adı veya şifre hatalı.";
             ViewBag.ReturnUrl = returnUrl;
-
             return View();
         }
 
-        HttpContext.Session.SetString(
-            "IsLoggedIn",
-            "true"
-        );
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
+        };
 
-        HttpContext.Session.SetString(
-            "Username",
-            user.Username
-        );
+        var identity = new ClaimsIdentity(
+            claims,
+            CookieAuthenticationDefaults.AuthenticationScheme);
 
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal);
+
+        HttpContext.Session.SetString("IsLoggedIn", "true");
+        HttpContext.Session.SetString("Username", user.Username);
         HttpContext.Session.SetString(
             "IsAdmin",
-            "true"
-        );
+            user.IsAdmin.ToString().ToLower());
 
-        HttpContext.Session.SetString(
-            "AdminUsername",
-            user.Username
-        );
+        if (user.IsAdmin)
+        {
+            HttpContext.Session.SetString(
+                "AdminUsername",
+                user.Username);
+        }
+        else
+        {
+            HttpContext.Session.Remove("AdminUsername");
+        }
 
         if (!string.IsNullOrEmpty(returnUrl))
         {
             return Redirect(returnUrl);
         }
 
-        return RedirectToAction(
-            "Index",
-            "Home"
-        );
+        return RedirectToAction("Index", "Home");
     }
 
     public IActionResult Register()
@@ -77,6 +92,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(
         string name,
         string username,
@@ -87,31 +103,25 @@ public class AccountController : Controller
         if (password != confirmPassword)
         {
             ViewBag.Error = "Şifreler eşleşmiyor.";
-
             return View();
         }
 
-        var existingUsername = await _context.Users
-            .FirstOrDefaultAsync(x =>
-                x.Username == username);
+        var existingUsername =
+            await _userService.GetByUsernameAsync(username);
 
         if (existingUsername != null)
         {
-            ViewBag.Error =
-                "Bu kullanıcı adı zaten kullanılıyor.";
-
+            ViewBag.Error = "Bu kullanıcı adı zaten kullanılıyor.";
             return View();
         }
 
-        var existingEmail = await _context.Users
-            .FirstOrDefaultAsync(x =>
-                x.Email == email);
+        var existingEmail =
+            await _userService.GetByEmailAsync(email);
 
         if (existingEmail != null)
         {
             ViewBag.Error =
                 "Bu e-posta adresi zaten kullanılıyor.";
-
             return View();
         }
 
@@ -120,38 +130,35 @@ public class AccountController : Controller
             Name = name,
             Username = username,
             Email = email,
-            Password = password,
-            IsAdmin = true
+            Password = BCrypt.Net.BCrypt.HashPassword(password),
+            IsAdmin = false
         };
 
-        _context.Users.Add(user);
+        await _userService.AddAsync(user);
 
-        await _context.SaveChangesAsync();
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(ClaimTypes.Role, "User")
+        };
 
-        HttpContext.Session.SetString(
-            "IsLoggedIn",
-            "true"
-        );
+        var identity = new ClaimsIdentity(
+            claims,
+            CookieAuthenticationDefaults.AuthenticationScheme);
 
-        HttpContext.Session.SetString(
-            "Username",
-            user.Username
-        );
+        var principal = new ClaimsPrincipal(identity);
 
-        HttpContext.Session.SetString(
-            "IsAdmin",
-            "true"
-        );
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal);
 
-        HttpContext.Session.SetString(
-            "AdminUsername",
-            user.Username
-        );
+        HttpContext.Session.SetString("IsLoggedIn", "true");
+        HttpContext.Session.SetString("Username", user.Username);
+        HttpContext.Session.SetString("IsAdmin", "false");
+        HttpContext.Session.Remove("AdminUsername");
 
-        return RedirectToAction(
-            "Index",
-            "Home"
-        );
+        return RedirectToAction("Index", "Home");
     }
 
     public IActionResult ForgotPassword()
@@ -160,107 +167,162 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ForgotPassword(
         string username,
         string email)
     {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(x =>
-                x.Username == username &&
-                x.Email == email);
+        var user =
+            await _userService.GetByUsernameAndEmailAsync(
+                username,
+                email);
 
         if (user == null)
         {
             ViewBag.Error =
                 "Kullanıcı adı veya e-posta bulunamadı.";
+            return View();
+        }
+
+        var tokenBytes =
+            RandomNumberGenerator.GetBytes(32);
+
+        var token = Convert.ToBase64String(tokenBytes)
+            .Replace("+", "-")
+            .Replace("/", "_")
+            .Replace("=", "");
+
+        using var sha256 = SHA256.Create();
+
+        var tokenHashBytes =
+            sha256.ComputeHash(
+                Encoding.UTF8.GetBytes(token));
+
+        var tokenHash =
+            Convert.ToHexString(tokenHashBytes);
+
+        var resetToken = new PasswordResetToken
+        {
+            UserId = user.UserId,
+            TokenHash = tokenHash,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(30),
+            IsUsed = false
+        };
+
+        await _passwordResetTokenService.CreateAsync(resetToken);
+
+        return RedirectToAction(
+            "ResetPassword",
+            new { token });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ResetPassword(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return RedirectToAction("ForgotPassword");
+        }
+
+        using var sha256 = SHA256.Create();
+
+        var tokenHashBytes =
+            sha256.ComputeHash(
+                Encoding.UTF8.GetBytes(token));
+
+        var tokenHash =
+            Convert.ToHexString(tokenHashBytes);
+
+        var resetToken =
+            await _passwordResetTokenService
+                .GetByTokenHashAsync(tokenHash);
+
+        if (resetToken == null ||
+            resetToken.IsUsed ||
+            resetToken.ExpiresAt <= DateTime.UtcNow)
+        {
+            ViewBag.Error =
+                "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş.";
 
             return View();
         }
 
-        HttpContext.Session.SetString(
-            "ResetUserId",
-            user.UserId.ToString()
-        );
-
-        return RedirectToAction(
-            "ResetPassword"
-        );
-    }
-
-    public IActionResult ResetPassword()
-    {
-        var resetUserId =
-            HttpContext.Session.GetString(
-                "ResetUserId"
-            );
-
-        if (string.IsNullOrEmpty(resetUserId))
-        {
-            return RedirectToAction(
-                "ForgotPassword"
-            );
-        }
+        ViewBag.Token = token;
 
         return View();
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResetPassword(
+        string token,
         string password,
         string confirmPassword)
     {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return RedirectToAction("ForgotPassword");
+        }
+
         if (password != confirmPassword)
         {
+            ViewBag.Error = "Şifreler eşleşmiyor.";
+            ViewBag.Token = token;
+            return View();
+        }
+
+        using var sha256 = SHA256.Create();
+
+        var tokenHashBytes =
+            sha256.ComputeHash(
+                Encoding.UTF8.GetBytes(token));
+
+        var tokenHash =
+            Convert.ToHexString(tokenHashBytes);
+
+        var resetToken =
+            await _passwordResetTokenService
+                .GetByTokenHashAsync(tokenHash);
+
+        if (resetToken == null ||
+            resetToken.IsUsed ||
+            resetToken.ExpiresAt <= DateTime.UtcNow)
+        {
             ViewBag.Error =
-                "Şifreler eşleşmiyor.";
+                "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş.";
 
             return View();
         }
 
-        var resetUserId =
-            HttpContext.Session.GetString(
-                "ResetUserId"
-            );
-
-        if (!int.TryParse(
-                resetUserId,
-                out int userId))
+        if (resetToken.User == null)
         {
-            return RedirectToAction(
-                "ForgotPassword"
-            );
+            return RedirectToAction("ForgotPassword");
         }
 
-        var user = await _context.Users
-            .FirstOrDefaultAsync(x =>
-                x.UserId == userId);
+        resetToken.User.Password =
+            BCrypt.Net.BCrypt.HashPassword(password);
 
-        if (user == null)
-        {
-            return RedirectToAction(
-                "ForgotPassword"
-            );
-        }
+        await _userService.UpdateAsync(resetToken.User);
 
-        user.Password = password;
+        resetToken.IsUsed = true;
 
-        await _context.SaveChangesAsync();
+        await _passwordResetTokenService.UpdateAsync(resetToken);
 
-        HttpContext.Session.Remove(
-            "ResetUserId"
-        );
-
-        return RedirectToAction(
-            "Login"
-        );
+        return RedirectToAction("Login");
     }
 
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme);
+
         HttpContext.Session.Clear();
 
-        return RedirectToAction(
-            "Login"
-        );
+        return RedirectToAction("Login");
+    }
+
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 }

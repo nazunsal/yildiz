@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using yildiz.business.Abstract;
 using yildiz.entities.Concrete;
 
@@ -13,11 +14,6 @@ public class CategoryController : Controller
         _categoryService = categoryService;
     }
 
-    private bool IsAdmin()
-    {
-        return HttpContext.Session.GetString("IsAdmin") == "true";
-    }
-
     public async Task<IActionResult> Index()
     {
         var categories = await _categoryService.GetAllAsync();
@@ -25,13 +21,9 @@ public class CategoryController : Controller
         return View(categories);
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id)
     {
-        if (!IsAdmin())
-        {
-            return RedirectToAction("Login", "Admin");
-        }
-
         var category = await _categoryService.GetByIdAsync(id);
 
         if (category == null)
@@ -43,57 +35,48 @@ public class CategoryController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update(Category category)
     {
-        if (!IsAdmin())
-        {
-            return RedirectToAction("Login", "Admin");
-        }
-
         if (ModelState.IsValid)
         {
             await _categoryService.UpdateAsync(category);
+
             return RedirectToAction(nameof(Index));
         }
 
         return View(category);
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Add()
     {
-        if (!IsAdmin())
-        {
-            return RedirectToAction("Login", "Admin");
-        }
-
         return View();
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Add(Category category)
     {
-        if (!IsAdmin())
-        {
-            return RedirectToAction("Login", "Admin");
-        }
-
         if (ModelState.IsValid)
         {
             await _categoryService.AddAsync(category);
+
             return RedirectToAction(nameof(Index));
         }
 
         return View(category);
     }
 
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        if (!IsAdmin())
-        {
-            return RedirectToAction("Login", "Admin");
-        }
-
         await _categoryService.DeleteAsync(id);
+
         return RedirectToAction(nameof(Index));
     }
 }
